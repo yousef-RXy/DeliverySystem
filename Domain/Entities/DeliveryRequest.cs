@@ -7,6 +7,5 @@ public class DeliveryRequest
     public double Weight { get; set; }
     public string Address { get; set; } = "";
     public DeliveryStatus Status { get; set; }
-
     public Guid DeliveryPersonId { get; set; }
 }

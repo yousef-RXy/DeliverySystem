@@ -14,25 +14,21 @@ public class SupabaseSchemaInitializer
         await conn.OpenAsync();
 
         var sql = @"
-        CREATE TABLE IF NOT EXISTS merchants (
+        CREATE TABLE IF NOT EXISTS users (
             id UUID PRIMARY KEY,
             username TEXT NOT NULL UNIQUE,
-            password_hash TEXT NOT NULL
+            password_hash TEXT NOT NULL,
+            role TEXT NOT NULL
         );
 
         CREATE TABLE IF NOT EXISTS delivery_requests (
             id UUID PRIMARY KEY,
-            merchant_id UUID REFERENCES merchants(id),
-            delivery_person_id UUID REFERENCES delivery_persons(id);
+            merchant_id UUID REFERENCES users(id),
+            delivery_person_id UUID REFERENCES users(id),
             package_size TEXT NOT NULL,
             weight DOUBLE PRECISION NOT NULL,
             address TEXT NOT NULL,
             status TEXT NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS delivery_persons (
-            id UUID PRIMARY KEY,
-            name TEXT NOT NULL
         );";
 
         try

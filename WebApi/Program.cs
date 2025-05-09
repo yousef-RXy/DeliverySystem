@@ -13,10 +13,8 @@ builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddScoped<SupabaseSchemaInitializer>(_ =>
     new SupabaseSchemaInitializer(connectionString));
 
-builder.Services.AddScoped<IDeliveryPersonRepository>(_ =>
-    new DeliveryPersonRepository(connectionString));
-builder.Services.AddScoped<IMerchantRepository>(_ =>
-    new MerchantRepository(connectionString));
+builder.Services.AddScoped<IUserRepository>(_ =>
+    new UserRepository(connectionString));
 builder.Services.AddScoped<IDeliveryRequestRepository>(_ =>
     new DeliveryRequestRepository(connectionString));
 

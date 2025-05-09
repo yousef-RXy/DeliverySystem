@@ -6,14 +6,12 @@ namespace Infrastructure.Persistence
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<Merchant> Merchants { get; set; }
-        public DbSet<DeliveryPerson> DeliveryPerson { get; set; }
+        public DbSet<User> User { get; set; }
         public DbSet<DeliveryRequest> DeliveryRequest { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
         }
     }
 }

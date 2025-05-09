@@ -1,25 +1,30 @@
 ﻿using Application.utils;
-using Domain.Entities;
+using Domain.DTO;
 using Domain.Repositories;
 
 namespace Application.Services;
 
 public class LoginMerchantService
 {
-    private readonly IMerchantRepository _merchantRepo;
+    private readonly IUserRepository _userRepo;
 
-    public LoginMerchantService(IMerchantRepository merchantRepo)
+    public LoginMerchantService(IUserRepository userRepo)
     {
-        _merchantRepo = merchantRepo;
+        _userRepo = userRepo;
     }
 
-    public async Task<Guid?> LoginAsync(string username, string password)
+    public async Task<UserDto?> LoginAsync(string username, string password)
     {
-        var merchant = await _merchantRepo.GetByUsernameAsync(username);
-        if (merchant == null) return null;
+        var user = await _userRepo.GetByUsernameAsync(username);
+        if (user == null) return null;
 
         var PasswordHash = Hash.HashPassword(password);
-        if (merchant.PasswordHash != PasswordHash) return null;
-        return merchant.Id;
+        if (user.PasswordHash != PasswordHash) return null;
+
+        return new UserDto
+        {
+            Id = user.Id,
+            Role = user.Role
+        };
     }
 }

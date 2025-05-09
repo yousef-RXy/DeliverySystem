@@ -18,12 +18,13 @@ public class DeliveryRequestRepository : IDeliveryRequestRepository
         await conn.OpenAsync();
 
         var sql = @"
-        INSERT INTO delivery_requests (id, merchant_id, package_size, weight, address, status)
-        VALUES (@id, @merchant_id, @package_size, @weight, @address, @status)";
+        INSERT INTO delivery_requests (id, merchant_id, delivery_person_id, package_size, weight, address, status)
+        VALUES (@id, @merchant_id, @delivery_person_id, @package_size, @weight, @address, @status)";
 
         await using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("id", request.Id);
         cmd.Parameters.AddWithValue("merchant_id", request.MerchantId);
+        cmd.Parameters.AddWithValue("delivery_person_id", request.DeliveryPersonId);
         cmd.Parameters.AddWithValue("package_size", request.PackageSize);
         cmd.Parameters.AddWithValue("weight", request.Weight);
         cmd.Parameters.AddWithValue("address", request.Address);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Services;
+using Domain.DTO;
 
 
 namespace WebApi.Controllers;
@@ -17,19 +18,17 @@ public class MerchantController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] merchantDto dto)
+    public async Task<IActionResult> Register([FromBody] UserAuthDto dto)
     {
         var merchant = await _registerservice.RegisterAsync(dto.Username, dto.Password);
         return Ok(merchant);
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] merchantDto request)
+    public async Task<IActionResult> Login([FromBody] UserAuthDto request)
     {
         var merchant = await _loginService.LoginAsync(request.Username, request.Password);
         if (merchant == null) return Unauthorized();
         return Ok(merchant);
     }
-
-    public record merchantDto(string Username, string Password);
 }
