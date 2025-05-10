@@ -14,9 +14,9 @@ public class RequestDeliveryService
         var request = new DeliveryRequest
         {
             Id = Guid.NewGuid(),
+            Title = dto.Title,
             MerchantId = dto.MerchantId,
-            //DeliveryPersonId = dto.DeliveryPersonId,
-            DeliveryPersonId = Guid.Parse("5d93ad37-9238-4f57-98c8-c1018b46507d"),
+            DeliveryPersonId = dto.DeliveryPersonId,
             PackageSize = dto.Size,
             Weight = dto.Weight,
             Address = dto.Address,

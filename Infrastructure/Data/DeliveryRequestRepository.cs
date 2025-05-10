@@ -18,11 +18,12 @@ public class DeliveryRequestRepository : IDeliveryRequestRepository
         await conn.OpenAsync();
 
         var sql = @"
-        INSERT INTO delivery_requests (id, merchant_id, delivery_person_id, package_size, weight, address, status)
-        VALUES (@id, @merchant_id, @delivery_person_id, @package_size, @weight, @address, @status)";
+        INSERT INTO delivery_requests (id, title, merchant_id, delivery_person_id, package_size, weight, address, status)
+        VALUES (@id, @title, @merchant_id, @delivery_person_id, @package_size, @weight, @address, @status)";
 
         await using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("id", request.Id);
+        cmd.Parameters.AddWithValue("title", request.Title);
         cmd.Parameters.AddWithValue("merchant_id", request.MerchantId);
         cmd.Parameters.AddWithValue("delivery_person_id", request.DeliveryPersonId);
         cmd.Parameters.AddWithValue("package_size", request.PackageSize);
@@ -41,7 +42,7 @@ public class DeliveryRequestRepository : IDeliveryRequestRepository
         await conn.OpenAsync();
 
         var sql = @"
-        SELECT id, merchant_id, package_size, weight, address, status, delivery_person_id
+        SELECT id, merchant_id, package_size, weight, address, status, delivery_person_id, title
         FROM delivery_requests
         WHERE delivery_person_id = @deliveryPersonId AND status != 'Delivered'";
 
@@ -55,11 +56,45 @@ public class DeliveryRequestRepository : IDeliveryRequestRepository
             {
                 Id = reader.GetGuid(0),
                 MerchantId = reader.GetGuid(1),
-                PackageSize = reader.GetString(2),
+                PackageSize = reader.GetDouble(2),
                 Weight = reader.GetDouble(3),
                 Address = reader.GetString(4),
                 Status = Enum.Parse<DeliveryStatus>(reader.GetString(5)),
-                DeliveryPersonId = reader.GetGuid(6)
+                DeliveryPersonId = reader.GetGuid(6),
+                Title = reader.GetString(7)
+            });
+        }
+
+        return requests;
+    }
+    public async Task<List<DeliveryRequest>> GetRequestedAsync(Guid MerchantId)
+    {
+        var requests = new List<DeliveryRequest>();
+
+        await using var conn = new NpgsqlConnection(_connStr);
+        await conn.OpenAsync();
+
+        var sql = @"
+        SELECT id, merchant_id, package_size, weight, address, status, delivery_person_id, title
+        FROM delivery_requests
+        WHERE merchant_id = @merchant_id";
+
+        await using var cmd = new NpgsqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("merchant_id", MerchantId);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            requests.Add(new DeliveryRequest
+            {
+                Id = reader.GetGuid(0),
+                MerchantId = reader.GetGuid(1),
+                PackageSize = reader.GetDouble(2),
+                Weight = reader.GetDouble(3),
+                Address = reader.GetString(4),
+                Status = Enum.Parse<DeliveryStatus>(reader.GetString(5)),
+                DeliveryPersonId = reader.GetGuid(6),
+                Title = reader.GetString(7)
             });
         }
 

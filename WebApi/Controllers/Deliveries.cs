@@ -6,21 +6,23 @@ using Domain.DTO;
 [Route("api/deliveries")]
 public class DeliveryController : ControllerBase
 {
-    private readonly RequestDeliveryService __requestservice;
+    private readonly RequestDeliveryService _requestservice;
     private readonly UpdateDeliveryStatusService _statusService;
     private readonly ViewAssignedDeliveriesService _assignedService;
+    private readonly ViewRequestedDeliveriesService _viewRequestservice;
     public DeliveryController(RequestDeliveryService requestservice, UpdateDeliveryStatusService statusService,
-                              ViewAssignedDeliveriesService assignedService) 
+                              ViewAssignedDeliveriesService assignedService, ViewRequestedDeliveriesService viewRequestservice) 
     {
-        __requestservice = requestservice;
+        _requestservice = requestservice;
         _statusService = statusService;
         _assignedService = assignedService;
+        _viewRequestservice = viewRequestservice;
     }
 
     [HttpPost("request")]
     public async Task<IActionResult> RequestDelivery([FromBody] DeliveryDto dto)
     {
-        await __requestservice.RequestAsync(dto);
+        await _requestservice.RequestAsync(dto);
         return Ok();
     }
     
@@ -28,6 +30,13 @@ public class DeliveryController : ControllerBase
     public async Task<IActionResult> GetAssigned(Guid deliveryPersonId)
     {
         var deliveries = await _assignedService.GetAssignedAsync(deliveryPersonId);
+        return Ok(deliveries);
+    }
+    
+    [HttpGet("requested/{merchantId}")]
+    public async Task<IActionResult> GetRequested(Guid merchantId)
+    {
+        var deliveries = await _viewRequestservice.Execute(merchantId);
         return Ok(deliveries);
     }
 

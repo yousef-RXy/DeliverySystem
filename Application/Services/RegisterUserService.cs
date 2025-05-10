@@ -5,18 +5,18 @@ using Domain.DTO;
 
 namespace Application.Services;
 
-public class RegisterMerchantService
+public class RegisterUserService
 {
     private readonly IUserRepository _repo;
-    public RegisterMerchantService(IUserRepository repo) => _repo = repo;
-    public async Task<UserDto?> RegisterAsync(string username, string password)
+    public RegisterUserService(IUserRepository repo) => _repo = repo;
+    public async Task<UserDto?> RegisterAsync(UserAuthDto dto)
     {
         var User = new User
         {
             Id = Guid.NewGuid(),
-            Username = username,
-            PasswordHash = Hash.HashPassword(password),
-            Role = UserRole.Merchant.ToString()
+            Username = dto.Username,
+            PasswordHash = Hash.HashPassword(dto.Password),
+            Role = dto.Role.ToString()
         };
 
         await _repo.AddAsync(User);

@@ -18,17 +18,32 @@ builder.Services.AddScoped<IUserRepository>(_ =>
 builder.Services.AddScoped<IDeliveryRequestRepository>(_ =>
     new DeliveryRequestRepository(connectionString));
 
-builder.Services.AddScoped<RegisterMerchantService>();
+builder.Services.AddScoped<RegisterUserService>();
 builder.Services.AddScoped<LoginMerchantService>();
 builder.Services.AddScoped<RequestDeliveryService>();
+builder.Services.AddScoped<GetDeliveryPeopleService>();
 builder.Services.AddScoped<UpdateDeliveryStatusService>();
 builder.Services.AddScoped<ViewAssignedDeliveriesService>();
+builder.Services.AddScoped<ViewRequestedDeliveriesService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 using (var scope = app.Services.CreateScope())
 {

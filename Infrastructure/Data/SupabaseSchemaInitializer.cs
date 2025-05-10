@@ -23,9 +23,10 @@ public class SupabaseSchemaInitializer
 
         CREATE TABLE IF NOT EXISTS delivery_requests (
             id UUID PRIMARY KEY,
+            title TEXT NOT NULL,
             merchant_id UUID REFERENCES users(id),
             delivery_person_id UUID REFERENCES users(id),
-            package_size TEXT NOT NULL,
+            package_size DOUBLE PRECISION NOT NULL,
             weight DOUBLE PRECISION NOT NULL,
             address TEXT NOT NULL,
             status TEXT NOT NULL

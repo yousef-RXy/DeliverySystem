@@ -6,12 +6,12 @@ using Domain.DTO;
 namespace WebApi.Controllers;
 
 [ApiController]
-[Route("api/merchants")]
+[Route("api/user")]
 public class MerchantController : ControllerBase
 {
-    private readonly RegisterMerchantService _registerservice;
+    private readonly RegisterUserService _registerservice;
     private readonly LoginMerchantService _loginService;
-    public MerchantController(RegisterMerchantService registerservice, LoginMerchantService loginService) 
+    public MerchantController(RegisterUserService registerservice, LoginMerchantService loginService) 
     { 
         _registerservice = registerservice;
         _loginService = loginService;
@@ -20,7 +20,7 @@ public class MerchantController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserAuthDto dto)
     {
-        var merchant = await _registerservice.RegisterAsync(dto.Username, dto.Password);
+        var merchant = await _registerservice.RegisterAsync(dto);
         return Ok(merchant);
     }
 

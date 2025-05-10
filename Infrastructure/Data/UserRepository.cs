@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.DTO;
+using Domain.Entities;
 using Domain.Repositories;
 using Npgsql;
 
@@ -38,7 +39,7 @@ public class UserRepository : IUserRepository
         await using var conn = new NpgsqlConnection(_connStr);
         await conn.OpenAsync();
 
-        var sql = "SELECT id, username, password_hash FROM Users WHERE username = @username";
+        var sql = "SELECT id, username, password_hash, role FROM Users WHERE username = @username";
         await using var cmd = new NpgsqlCommand(sql, conn);
         cmd.Parameters.AddWithValue("username", username);
 
@@ -49,11 +50,40 @@ public class UserRepository : IUserRepository
             {
                 Id = reader.GetGuid(0),
                 Username = reader.GetString(1),
-                PasswordHash = reader.GetString(2)
+                PasswordHash = reader.GetString(2),
+                Role = reader.GetString(3)
             };
         }
 
         return null;
     }
 
+    public async Task<List<DeliveryPersonDto>> GetDeliveryPeople()
+    {
+        var deliveryPeople = new List<DeliveryPersonDto>();
+
+        await using var conn = new NpgsqlConnection(_connStr);
+        await conn.OpenAsync();
+
+        var sql = @"
+        SELECT id, username, password_hash, role
+        FROM users
+        WHERE role = 'DeliveryPerson'";
+
+        await using var cmd = new NpgsqlCommand(sql, conn);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var deliveryPerson = new DeliveryPersonDto
+            {
+                Id = reader.GetGuid(0),
+                Username = reader.GetString(1),
+            };
+
+            deliveryPeople.Add(deliveryPerson);
+        }
+
+        return deliveryPeople;
+    }
 }
